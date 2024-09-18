@@ -1,0 +1,5 @@
+build/
+docs/html/
+bin/
+.vscode/
+external/
