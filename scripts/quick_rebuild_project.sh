@@ -13,11 +13,6 @@ echo "Building the project..."
 make
 echo "Rebuild complete."
 
-echo "Generating documentation..."
-cd ../docs
-doxygen Doxyfile
-echo "Documentation generation complete!"
-
 echo "Run unit tests..."
 cd ..
 ./bin/run_unit_tests.exe

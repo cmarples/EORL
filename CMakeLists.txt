@@ -15,6 +15,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 set(LIBRARY_NAME "EORL")
 set(EXECUTABLE_NAME "run_eorl_demo_app.exe")
 
+find_package(Eigen3 REQUIRED)
+
 include(FetchContent)
 option(ENABLE_TESTING "Enable a Unit Testing Build" ON)
 

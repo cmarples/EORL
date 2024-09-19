@@ -8,4 +8,8 @@ TEST_CASE("EllipsoidConstruction")
     REQUIRE(ellipsoid.getA() == 3.0);
     REQUIRE(ellipsoid.getB() == 2.0);
     REQUIRE(ellipsoid.getC() == 1.0);
+    REQUIRE(ellipsoid.hasTransform() == false);
+
+    ellipsoid.setCanonicalTransform();
+    REQUIRE(ellipsoid.hasTransform() == true);
 }

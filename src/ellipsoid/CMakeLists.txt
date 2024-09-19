@@ -9,5 +9,5 @@ add_library(${LIBRARY_NAME} STATIC
     ${LIBRARY_HEADERS})
 target_include_directories(${LIBRARY_NAME} PUBLIC
     ${LIBRARY_INCLUDES})
-target_link_libraries(${LIBRARY_NAME} PUBLIC)
+target_link_libraries(${LIBRARY_NAME} PUBLIC Eigen3::Eigen)
 target_include_directories(${LIBRARY_NAME} PUBLIC ${LIBRARY_INCLUDES})

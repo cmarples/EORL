@@ -21,6 +21,16 @@
 #define ELLIPSOID_HPP
 
 #include <array>
+#include <memory>
+
+// Forward declare required types from Eigen.
+namespace Eigen {
+    template<typename Scalar, int Rows, int Cols, int Options, int MaxRows, int MaxCols>
+    class Matrix;
+    // Forward declare specific types based on Matrix template
+    typedef Matrix<double, 3, 1, 0, 3, 1> Vector3d;
+    typedef Matrix<double, 3, 3, 0, 3, 3> Matrix3d;
+}
 
 /**
  * @brief Represents a 3D ellipsoid with semi-principal axes, position and orientation.
@@ -60,14 +70,39 @@ public:
     void setB(double AxisB) { semi_axes[0] = AxisB; }
     void setC(double AxisC) { semi_axes[0] = AxisC; }
 
+    void setCanonicalTransform();
+    void setPositionVector();
+    void setRotationMatrix();
+
     /********** Output to Screen **********/
+
+    /**
+     * @brief Prints the axis lengths, position vector and rotation matrix of the ellipsoid to the screen.
+     */
+    void printEllipsoidTransform() const;
 
     /**
      * @brief Prints the axis lengths of the ellipsoid to the screen.
      */
     void printSemiAxes() const;
 
-    
+    void printPositionVector() const;
+
+    void printRotationMatrix() const;
+
+    /********** Queries **********/
+
+    /**
+     * @brief Returns true if both the position and orientation have been set.
+     * 
+     * In the context of EORL, a 'canonical ellipsoid' defined to have position vector (0, 0, 0) 
+     * and an identity rotation matrix.
+     * 
+     * The value of the boolean is true upon construction, with position and orientation pointers null.
+     * Once both position and orientation pointers are not null, this boolean is set to false.
+     */ 
+    bool hasTransform() const;
+
 
 private:
 
@@ -77,6 +112,18 @@ private:
      * a, b, and c are the lengths of the ellipsoid's semi-principal axes along the x, y, and z axes, respectively.
      */
     std::array<double, 3> semi_axes;
+
+    /**
+     * @brief The location of the ellipsoid centre, represented as a 3D position vector.
+     */
+    std::shared_ptr<Eigen::Vector3d> ptr_position;
+
+    /**
+     * @brief The orientation of the ellipsoid, represented as a 3x3 rotation matrix.
+     */
+    std::shared_ptr<Eigen::Matrix3d> ptr_orientation;
+
+    
 };
 
 
