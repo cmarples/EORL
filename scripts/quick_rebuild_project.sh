@@ -15,5 +15,5 @@ echo "Rebuild complete."
 
 echo "Run unit tests..."
 cd ..
-./bin/run_unit_tests.exe
+./bin/unit_tests.exe
 echo "script: quick_rebuild_project.sh is complete!"

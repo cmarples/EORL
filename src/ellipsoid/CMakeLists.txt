@@ -1,7 +1,9 @@
 set(LIBRARY_SOURCES
-    "ellipsoid.cpp")
+    "ellipsoid.cpp"
+    "ellipse.cpp")
 set(LIBRARY_HEADERS
-    "ellipsoid.hpp")
+    "ellipsoid.hpp"
+    "ellipse.hpp")
 set(LIBRARY_INCLUDES "./")
 
 add_library(${LIBRARY_NAME} STATIC

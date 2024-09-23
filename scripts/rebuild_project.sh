@@ -29,5 +29,5 @@ echo "Documentation generation complete!"
 
 echo "Run unit tests..."
 cd ..
-./bin/run_unit_tests.exe
+./bin/unit_tests.exe
 echo "script: rebuild_project.sh is complete!"

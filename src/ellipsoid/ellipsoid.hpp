@@ -1,5 +1,5 @@
 /**
- * @file Ellipsoid.hpp
+ * @file ellipsoid.hpp
  * @brief Defines the Ellipsoid class for 3D ellipsoids and provides related geometric functions.
  *
  * The Ellipsoid class represents an ellipsoid in 3D space, characterized by its center, 
@@ -64,6 +64,8 @@ public:
     double getB() { return semi_axes[1]; }
     double getC() { return semi_axes[2]; }
 
+    std::array<double, 3> getPositionVector();
+
     /********** Setters **********/
 
     void setA(double AxisA) { semi_axes[0] = AxisA; }
@@ -72,7 +74,9 @@ public:
 
     void setCanonicalTransform();
     void setPositionVector();
+    void setPositionVector(std::array<double, 3>& position);
     void setRotationMatrix();
+    void setRotationMatrix(std::array<std::array<double, 3>, 3>& rotation);
 
     /********** Output to Screen **********/
 

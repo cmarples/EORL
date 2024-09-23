@@ -16,7 +16,5 @@ int main()
     ellipsoid.printEllipsoidTransform();
 
     
-
-    
     return 0;
 }
