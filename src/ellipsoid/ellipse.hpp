@@ -100,6 +100,13 @@ public:
      */ 
     bool hasTransform() const;
 
+    bool isCircle() const;
+
+
+    /********** Distances and Intersections **********/
+
+    std::array<double, 2> computeClosestPerimeterPoint(const std::array<double, 2>& query_point) const;
+    std::array<double, 2> computeClosestPerimeterPointCircle(const std::array<double, 2>& query_point) const;
 
 private:
 

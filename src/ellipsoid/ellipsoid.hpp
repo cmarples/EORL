@@ -32,6 +32,20 @@ namespace Eigen {
     typedef Matrix<double, 3, 3, 0, 3, 3> Matrix3d;
 }
 
+enum class EllipsoidForm
+{
+    Sphere,
+    Oblate,
+    Prolate,
+    Triaxial
+};
+
+struct SpheroidAxes 
+{
+    double repeated;
+    double distinct;
+};
+
 /**
  * @brief Represents a 3D ellipsoid with semi-principal axes, position and orientation.
  * This is the fundamental class of EORL. It provides methods to perform various geometric operations on the ellipsoid.
@@ -68,9 +82,10 @@ public:
 
     /********** Setters **********/
 
-    void setA(double AxisA) { semi_axes[0] = AxisA; }
-    void setB(double AxisB) { semi_axes[0] = AxisB; }
-    void setC(double AxisC) { semi_axes[0] = AxisC; }
+    void setA(double a_axis);
+    void setB(double b_axis);
+    void setC(double c_axis);
+    void setSemiAxes(std::array<double, 3> axes);
 
     void setCanonicalTransform();
     void setPositionVector();
@@ -107,6 +122,22 @@ public:
      */ 
     bool hasTransform() const;
 
+    bool isSphere() const;
+    bool isSpheroid() const;
+    bool isOblate();
+    bool isProlate();
+    bool isTriaxial() const;
+
+    /********** Internal Handling **********/
+
+    void determineForm();
+    SpheroidAxes determineSpheroidAxes();
+
+    /********** Distances and Intersections **********/
+
+    std::array<double, 3> computeClosestSurfacePoint(const std::array<double, 3>& query_point) const;
+    std::array<double, 3> computeClosestSurfacePointSphere(const std::array<double, 3>& query_point) const;
+
 
 private:
 
@@ -127,7 +158,7 @@ private:
      */
     std::shared_ptr<Eigen::Matrix3d> ptr_orientation;
 
-    
+    EllipsoidForm form;
 };
 
 

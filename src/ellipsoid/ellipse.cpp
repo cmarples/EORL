@@ -87,3 +87,9 @@ bool Ellipse::hasTransform() const
 {
     return (ptr_position && ptr_orientation);
 }
+
+bool Ellipse::isCircle() const
+{
+    return (semi_axes[0] == semi_axes[1]);
+}
+
