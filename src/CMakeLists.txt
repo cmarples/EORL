@@ -1,2 +1,3 @@
 add_subdirectory(ellipsoid)
-add_subdirectory(distances)
+add_subdirectory(ellipse)
+add_subdirectory(utilities)

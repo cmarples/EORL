@@ -26,7 +26,7 @@ std::array<double, 2> Ellipse::computeClosestPerimeterPointCircle(const std::arr
     double centre_to_query_norm_squared = centre_to_query.squaredNorm();
     if (centre_to_query_norm_squared < 1.0e-14) // Point coincides with circle centre
     {
-        contact_point = Eigen::Vector3d(semi_axes[0], 0.0) + *ptr_position;
+        contact_point = Eigen::Vector2d(semi_axes[0], 0.0) + *ptr_position;
     }
     else
     {

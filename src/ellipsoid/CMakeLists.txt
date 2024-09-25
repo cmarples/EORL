@@ -1,9 +1,8 @@
 set(LIBRARY_SOURCES
     "ellipsoid.cpp"
-    "ellipse.cpp")
+	"ellipsoid_closest_surface_point.cpp")
 set(LIBRARY_HEADERS
-    "ellipsoid.hpp"
-    "ellipse.hpp")
+    "ellipsoid.hpp")
 set(LIBRARY_INCLUDES "./")
 
 add_library(${LIBRARY_NAME} STATIC
