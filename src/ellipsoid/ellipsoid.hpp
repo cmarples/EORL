@@ -22,15 +22,7 @@
 
 #include <array>
 #include <memory>
-
-// Forward declare required types from Eigen.
-namespace Eigen {
-    template<typename Scalar, int Rows, int Cols, int Options, int MaxRows, int MaxCols>
-    class Matrix;
-    // Forward declare specific types based on Matrix template
-    typedef Matrix<double, 3, 1, 0, 3, 1> Vector3d;
-    typedef Matrix<double, 3, 3, 0, 3, 3> Matrix3d;
-}
+#include <Eigen/Core>
 
 enum class EllipsoidForm
 {
@@ -64,11 +56,11 @@ public:
 
     /**
      * @brief Parameterized constructor, with semi-principal axis lengths only.
-     * @param a a axis of the ellipsoid.
-     * @param b b axis of the ellipsoid.
-     * @param c c axis of the ellipsoid.
+     * @param a_axis a axis of the ellipsoid.
+     * @param b_axis b axis of the ellipsoid.
+     * @param c_axis c axis of the ellipsoid.
      */
-    Ellipsoid(const double& a, const double& b, const double& c);
+    Ellipsoid(double a_axis, double b_axis, double c_axis);
 
     //Ellipsoid(const Vector3D& center, const Vector3D& radii, const Matrix3x3& orientation);
 
@@ -78,20 +70,24 @@ public:
     double getB() { return semi_axes[1]; }
     double getC() { return semi_axes[2]; }
 
-    std::array<double, 3> getPositionVector();
+    Eigen::Vector3d getPositionVector();
 
     /********** Setters **********/
 
     void setA(double a_axis);
     void setB(double b_axis);
     void setC(double c_axis);
+    void setSemiAxes(double a_axis, double b_axis, double c_axis);
     void setSemiAxes(std::array<double, 3> axes);
 
     void setCanonicalTransform();
     void setPositionVector();
-    void setPositionVector(std::array<double, 3>& position);
+    void setPositionVector(double x_coordinate, double y_coordinate, double z_coordinate);
+    void setPositionVector(std::array<double, 3>& input_position);
+    void setPositionVector(Eigen::Vector3d& input_position);
     void setRotationMatrix();
-    void setRotationMatrix(std::array<std::array<double, 3>, 3>& rotation);
+    void setRotationMatrix(std::array<std::array<double, 3>, 3>& input_rotation);
+    void setRotationMatrix(Eigen::Matrix3d& input_rotation);
 
     /********** Output to Screen **********/
 
@@ -135,8 +131,8 @@ public:
 
     /********** Distances and Intersections **********/
 
-    std::array<double, 3> computeClosestSurfacePoint(const std::array<double, 3>& query_point) const;
-    std::array<double, 3> computeClosestSurfacePointSphere(const std::array<double, 3>& query_point) const;
+    Eigen::Vector3d computeClosestSurfacePoint(const Eigen::Vector3d& query_point) const;
+    Eigen::Vector3d computeClosestSurfacePointSphere(const Eigen::Vector3d& query_point) const;
 
 
 private:
@@ -151,12 +147,12 @@ private:
     /**
      * @brief The location of the ellipsoid centre, represented as a 3D position vector.
      */
-    std::shared_ptr<Eigen::Vector3d> ptr_position;
+    Eigen::Vector3d position;
 
     /**
      * @brief The orientation of the ellipsoid, represented as a 3x3 rotation matrix.
      */
-    std::shared_ptr<Eigen::Matrix3d> ptr_orientation;
+    Eigen::Matrix3d orientation;
 
     EllipsoidForm form;
 };

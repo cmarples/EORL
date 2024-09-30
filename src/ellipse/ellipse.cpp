@@ -1,26 +1,24 @@
 #include "ellipse.hpp"
-#include <Eigen/Core>
 #include <iostream>
 #include <iomanip>
 
 Ellipse::Ellipse()
 {
     semi_axes = {1.0, 1.0};
-    ptr_position = nullptr;
-    ptr_orientation = nullptr;
+    position = Eigen::Vector2d(0.0, 0.0);
+    orientation = Eigen::Matrix2d::Identity();
 }
 
 Ellipse::Ellipse(const double& a, const double& b)
 {
     semi_axes = {a, b};
-    ptr_position = nullptr;
-    ptr_orientation = nullptr;
+    position = Eigen::Vector2d(0.0, 0.0);
+    orientation = Eigen::Matrix2d::Identity();
 }
 
-std::array<double, 2> Ellipse::getPositionVector()
+Eigen::Vector2d Ellipse::getPositionVector()
 {
-    if (ptr_position) { return { (*ptr_position)(0), (*ptr_position)(1) }; }
-    else { return {0.0, 0.0}; }
+    return position;
 }
 
 void Ellipse::setCanonicalTransform()
@@ -31,28 +29,37 @@ void Ellipse::setCanonicalTransform()
 
 void Ellipse::setPositionVector()
 {
-    if (ptr_position) { *ptr_position = Eigen::Vector2d(0.0, 0.0); }
-    else { ptr_position = std::make_shared<Eigen::Vector2d>(Eigen::Vector2d(0.0, 0.0)); }
+    position = Eigen::Vector2d(0.0, 0.0);
 }
 
-void Ellipse::setPositionVector(std::array<double, 2>& position)
+void Ellipse::setPositionVector(float x_coordinate, float y_coordinate)
 {
-    Eigen::Vector2d positionVector(position[0], position[1]);
-    if (ptr_position) { *ptr_position = positionVector; }
-    else { ptr_position = std::make_shared<Eigen::Vector2d>(positionVector); }
+    position = Eigen::Vector2d(x_coordinate, y_coordinate);
+}
+
+void Ellipse::setPositionVector(std::array<double, 2>& input_position)
+{
+    position = Eigen::Vector2d(input_position[0], input_position[1]);
+}
+
+void Ellipse::setPositionVector(Eigen::Vector2d &input_position)
+{
+    position = input_position;
 }
 
 void Ellipse::setRotationMatrix()
 {
-    if (ptr_orientation) { *ptr_orientation = Eigen::Matrix2d::Identity(); }
-    else { ptr_orientation = std::make_shared<Eigen::Matrix2d>(Eigen::Matrix2d::Identity()); }
+    orientation = Eigen::Matrix2d::Identity();
 }
 
-void Ellipse::setRotationMatrix(std::array<std::array<double, 2>, 2>& rotation)
+void Ellipse::setRotationMatrix(std::array<std::array<double, 2>, 2>& input_rotation)
 {
-    Eigen::Matrix2d rotationMatrix = Eigen::Map<Eigen::Matrix<double, 2, 2>>(rotation[0].data());
-    if (ptr_orientation) { *ptr_orientation = rotationMatrix; }
-    else { ptr_orientation = std::make_shared<Eigen::Matrix2d>(rotationMatrix); }
+    orientation = Eigen::Map<Eigen::Matrix<double, 2, 2>>(input_rotation[0].data());
+}
+
+void Ellipse::setRotationMatrix(Eigen::Matrix2d &input_rotation)
+{
+    orientation = input_rotation;
 }
 
 void Ellipse::printEllipseTransform() const
@@ -72,20 +79,19 @@ void Ellipse::printSemiAxes() const
 void Ellipse::printPositionVector() const
 {
     std::cout << "Position vector:\n";
-    if (ptr_position) { std::cout << *ptr_position << "\n"; }
-    else { std::cout << "Position is null" << "\n"; }
+    std::cout << position << "\n";
 }
 
 void Ellipse::printRotationMatrix() const
 {
     std::cout << "Rotation matrix:\n";
-    if (ptr_orientation) { std::cout << *ptr_orientation << "\n"; }
-    else { std::cout << "Orientation is null" << "\n"; }
+    std::cout << orientation << "\n";
 }
 
 bool Ellipse::hasTransform() const
 {
-    return (ptr_position && ptr_orientation);
+    return (position != Eigen::Vector2d(0.0, 0.0) ||
+         orientation != Eigen::Matrix2d::Identity());
 }
 
 bool Ellipse::isCircle() const

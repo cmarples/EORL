@@ -11,5 +11,8 @@ TEST_CASE("EllipsoidConstruction")
     REQUIRE(ellipsoid.hasTransform() == false);
 
     ellipsoid.setCanonicalTransform();
+    REQUIRE(ellipsoid.hasTransform() == false);
+
+    ellipsoid.setPositionVector(0.0, 0.0, 1.0);
     REQUIRE(ellipsoid.hasTransform() == true);
 }

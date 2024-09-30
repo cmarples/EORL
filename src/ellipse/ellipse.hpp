@@ -22,15 +22,7 @@
 
 #include <array>
 #include <memory>
-
-// Forward declare required types from Eigen.
-namespace Eigen {
-    template<typename Scalar, int Rows, int Cols, int Options, int MaxRows, int MaxCols>
-    class Matrix;
-    // Forward declare specific types based on Matrix template
-    typedef Matrix<double, 2, 1, 0, 2, 1> Vector2d;
-    typedef Matrix<double, 2, 2, 0, 2, 2> Matrix2d;
-}
+#include <Eigen/Core>
 
 /**
  * @brief Represents a 2D ellipse with semi-principal axes, position and orientation.
@@ -58,7 +50,7 @@ public:
     
     double getA() { return semi_axes[0]; }
     double getB() { return semi_axes[1]; }
-    std::array<double, 2> getPositionVector();
+    Eigen::Vector2d getPositionVector();
 
     /********** Setters **********/
 
@@ -67,9 +59,12 @@ public:
 
     void setCanonicalTransform();
     void setPositionVector();
-    void setPositionVector(std::array<double, 2>& position);
+    void setPositionVector(float x_coordinate, float y_coordinate);
+    void setPositionVector(std::array<double, 2>& input_position);
+    void setPositionVector(Eigen::Vector2d& input_position);
     void setRotationMatrix();
-    void setRotationMatrix(std::array<std::array<double, 2>, 2>& rotation);
+    void setRotationMatrix(std::array<std::array<double, 2>, 2>& input_rotation);
+    void setRotationMatrix(Eigen::Matrix2d& input_rotation);
 
     /********** Output to Screen **********/
 
@@ -105,8 +100,8 @@ public:
 
     /********** Distances and Intersections **********/
 
-    std::array<double, 2> computeClosestPerimeterPoint(const std::array<double, 2>& query_point) const;
-    std::array<double, 2> computeClosestPerimeterPointCircle(const std::array<double, 2>& query_point) const;
+    Eigen::Vector2d computeClosestPerimeterPoint(const Eigen::Vector2d& query_point) const;
+    Eigen::Vector2d computeClosestPerimeterPointCircle(const Eigen::Vector2d& query_point) const;
 
 private:
 
@@ -120,14 +115,14 @@ private:
     /**
      * @brief The location of the ellipse centre, represented as a 2D position vector.
      */
-    std::shared_ptr<Eigen::Vector2d> ptr_position;
+    Eigen::Vector2d position;
 
     /**
      * @brief The orientation of the ellipse, represented as a 2x2 rotation matrix.
      */
-    std::shared_ptr<Eigen::Matrix2d> ptr_orientation;
+    Eigen::Matrix2d orientation;
 
-    
+
 };
 
 #endif // ELLIPSE_HPP

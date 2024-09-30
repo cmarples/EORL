@@ -6,23 +6,22 @@
 Ellipsoid::Ellipsoid()
 {
     semi_axes = {1.0, 1.0, 1.0};
-    ptr_position = nullptr;
-    ptr_orientation = nullptr;
+    position = Eigen::Vector3d(0.0, 0.0, 0.0);
+    orientation = Eigen::Matrix3d::Identity();
     form = EllipsoidForm::Sphere;
 }
 
-Ellipsoid::Ellipsoid(const double &a, const double &b, const double &c)
+Ellipsoid::Ellipsoid(double a_axis, double b_axis, double c_axis)
 {
-    semi_axes = {a, b, c};
-    ptr_position = nullptr;
-    ptr_orientation = nullptr;
+    semi_axes = {a_axis, b_axis, c_axis};
+    position = Eigen::Vector3d(0.0, 0.0, 0.0);
+    orientation = Eigen::Matrix3d::Identity();
     determineForm();
 }
 
-std::array<double, 3> Ellipsoid::getPositionVector()
+Eigen::Vector3d Ellipsoid::getPositionVector()
 {
-    if (ptr_position) { return { (*ptr_position)(0), (*ptr_position)(1), (*ptr_position)(2) }; }
-    else { return {0.0, 0.0, 0.0}; }
+    return position;
 }
 
 void Ellipsoid::setA(double a_axis)
@@ -43,6 +42,11 @@ void Ellipsoid::setC(double c_axis)
     determineForm();
 }
 
+void Ellipsoid::setSemiAxes(double a_axis, double b_axis, double c_axis)
+{
+    semi_axes = {a_axis, b_axis, c_axis};
+}
+
 void Ellipsoid::setSemiAxes(std::array<double, 3> axes)
 {
     semi_axes = axes;
@@ -57,29 +61,37 @@ void Ellipsoid::setCanonicalTransform()
 
 void Ellipsoid::setPositionVector()
 {
-    if (ptr_position) { *ptr_position = Eigen::Vector3d(0.0, 0.0, 0.0); }
-    else { ptr_position = std::make_shared<Eigen::Vector3d>(Eigen::Vector3d(0.0, 0.0, 0.0)); } 
+    position = Eigen::Vector3d(0.0, 0.0, 0.0);
 }
 
-void Ellipsoid::setPositionVector(std::array<double, 3>& position)
+void Ellipsoid::setPositionVector(double x_coordinate, double y_coordinate, double z_coordinate)
 {
-    Eigen::Vector3d positionVector(position[0], position[1], position[2]);
-    if (ptr_position) { *ptr_position = positionVector; }
-    else { ptr_position = std::make_shared<Eigen::Vector3d>(positionVector); } 
+    position = Eigen::Vector3d(x_coordinate, y_coordinate, z_coordinate);
+}
+
+void Ellipsoid::setPositionVector(std::array<double, 3>& input_position)
+{
+    position = Eigen::Vector3d(position[0], position[1], position[2]);
+}
+
+void Ellipsoid::setPositionVector(Eigen::Vector3d &input_position)
+{
+    position = input_position;
 }
 
 void Ellipsoid::setRotationMatrix()
 {
-    if (ptr_orientation) { *ptr_orientation = Eigen::Matrix3d::Identity(); }
-    else { ptr_orientation = std::make_shared<Eigen::Matrix3d>(Eigen::Matrix3d::Identity()); }
-    
+    orientation = Eigen::Matrix3d::Identity();
 }
 
-void Ellipsoid::setRotationMatrix(std::array<std::array<double, 3>, 3>& rotation)
+void Ellipsoid::setRotationMatrix(std::array<std::array<double, 3>, 3>& input_rotation)
 {
-    Eigen::Matrix3d rotationMatrix = Eigen::Map<Eigen::Matrix<double, 3, 3>>(rotation[0].data());
-    if (ptr_orientation) { *ptr_orientation = rotationMatrix; }
-    else { ptr_orientation = std::make_shared<Eigen::Matrix3d>(rotationMatrix); }
+    orientation = Eigen::Map<Eigen::Matrix<double, 3, 3>>(input_rotation[0].data());
+}
+
+void Ellipsoid::setRotationMatrix(Eigen::Matrix3d &input_rotation)
+{
+    orientation = input_rotation;
 }
 
 void Ellipsoid::printEllipsoidTransform() const
@@ -100,20 +112,19 @@ void Ellipsoid::printSemiAxes() const
 void Ellipsoid::printPositionVector() const
 {
     std::cout << "Position vector:\n";
-    if (ptr_position) { std::cout << *ptr_position << "\n"; }
-    else { std::cout << "Position is null" << "\n"; }
+    std::cout << position << "\n";
 }
 
 void Ellipsoid::printRotationMatrix() const
 {
     std::cout << "Rotation matrix:\n";
-    if (ptr_orientation) { std::cout << *ptr_orientation << "\n"; }
-    else { std::cout << "Orientation is null" << "\n"; }
+    std::cout << orientation << "\n";
 }
 
 bool Ellipsoid::hasTransform() const
 {
-    return (ptr_position && ptr_orientation);
+    return (position != Eigen::Vector3d(0.0, 0.0, 0.0) ||
+         orientation != Eigen::Matrix3d::Identity());
 }
 
 bool Ellipsoid::isSphere() const
@@ -168,25 +179,27 @@ void Ellipsoid::determineForm()
 SpheroidAxes Ellipsoid::determineSpheroidAxes()
 {
     SpheroidAxes spheroid_axes;
-    if (semi_axes[0] == semi_axes[1])
+    spheroid_axes.repeated = -1.0;
+    spheroid_axes.distinct = -1.0;
+
+    if (form != EllipsoidForm::Sphere)
     {
-        spheroid_axes.repeated = semi_axes[0];
-        spheroid_axes.distinct = semi_axes[2];
+        if (semi_axes[0] == semi_axes[1])
+        {
+            spheroid_axes.repeated = semi_axes[0];
+            spheroid_axes.distinct = semi_axes[2];
+        }
+        else if (semi_axes[0] == semi_axes[2])
+        {
+            spheroid_axes.repeated = semi_axes[0];
+            spheroid_axes.distinct = semi_axes[1];
+        }
+        else if (semi_axes[1] == semi_axes[2])
+        {
+            spheroid_axes.repeated = semi_axes[1];
+            spheroid_axes.distinct = semi_axes[0];
+        }
     }
-    else if (semi_axes[0] == semi_axes[2])
-    {
-        spheroid_axes.repeated = semi_axes[0];
-        spheroid_axes.distinct = semi_axes[1];
-    }
-    else if (semi_axes[1] == semi_axes[2])
-    {
-        spheroid_axes.repeated = semi_axes[1];
-        spheroid_axes.distinct = semi_axes[0];
-    }
-    else // Not a spheroid!
-    {
-        spheroid_axes.repeated = -1.0;
-        spheroid_axes.distinct = -1.0;
-    }
+
     return spheroid_axes;
 }
